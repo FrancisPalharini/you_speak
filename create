@@ -1,0 +1,233 @@
+DROP database you_speak;
+create database you_speak;
+use you_speak;
+
+
+CREATE TABLE notas (
+    id_nota INT(3) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    tipo_nota VARCHAR(10) NOT NULL,
+    data_nota DATETIME NOT NULL
+);
+
+
+CREATE TABLE desconto (
+    sigla_desc VARCHAR(3) PRIMARY KEY NOT NULL,
+    descricao_desc VARCHAR(40) NOT NULL,
+    porcentagem_desc DECIMAL(3) NOT NULL
+);
+
+
+CREATE TABLE responsavel (
+    cpf_resp NUMERIC(10) PRIMARY KEY NOT NULL,
+    data_nasc_resp DATETIME NOT NULL,
+    nome_resp VARCHAR(120) NOT NULL,
+    gen_resp VARCHAR(2) NULL
+);
+
+CREATE TABLE contato (
+    id_con INT(3) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    num_tel NUMERIC(10) NULL,
+    num_cel NUMERIC(11) NOT NULL,
+    email VARCHAR(120) NULL 
+);
+
+CREATE TABLE estado (
+    sigla_estado VARCHAR(4) PRIMARY KEY NOT NULL,
+    nome_estado VARCHAR(30) NOT NULL
+);
+
+CREATE TABLE cidade (
+    id_cidade INT(5) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    nome_cidade VARCHAR(20) NOT NULL,
+    sigla_estado VARCHAR(4) NOT NULL,
+    FOREIGN KEY(sigla_estado) REFERENCES estado (sigla_estado)
+
+);
+
+CREATE TABLE endereco (
+    cep NUMERIC(15) PRIMARY KEY NOT NULL,
+    complemento VARCHAR(10) NOT NULL,
+    numero NUMERIC(4) NOT NULL,
+    logradouro VARCHAR(50) NOT NULL,
+    id_cidade INT(5) NOT NULL,
+    FOREIGN KEY(id_cidade) REFERENCES cidade (id_cidade)
+);
+
+
+CREATE TABLE filial (
+    cnpj NUMERIC(12) PRIMARY KEY NOT NULL,
+    endereco_filial VARCHAR(50) NOT NULL,
+    nome_filial VARCHAR(50) NOT NULL,
+    tel_filial NUMERIC(12) NOT NULL
+);
+
+CREATE TABLE setor (
+    id_setor INT(2) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    nome_setor VARCHAR(20) NOT NULL,
+    cnpj NUMERIC(12) NOT NULL,
+    FOREIGN KEY(cnpj) REFERENCES filial (cnpj)
+
+);
+
+
+CREATE TABLE cargos (
+    id_cargo INT(3) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    nome_cargo VARCHAR(30) NOT NULL,
+    id_setor INT(2) NOT NULL,
+    FOREIGN KEY(id_setor) REFERENCES setor (id_setor)
+);
+
+
+
+CREATE TABLE idiomas (
+    sigla_idioma VARCHAR(5) PRIMARY KEY NOT NULL,
+    nome_idioma VARCHAR(10) NOT NULL
+);
+
+
+
+CREATE TABLE chamada (
+    id_aula DATETIME PRIMARY KEY NOT NULL,
+    presenca VARCHAR(1) NOT NULL
+);
+
+
+
+CREATE TABLE mensalidade (
+    id_mensalidade INT(10) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    valor FLOAT(6) NOT NULL,
+    descricao VARCHAR(40) NOT NULL
+);
+
+
+CREATE TABLE frequencia  (
+    id_frequencia INT(5) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    tipo_frequencia VARCHAR(10) NOT NULL
+);
+
+CREATE TABLE modalidade (
+    sigla VARCHAR(2) PRIMARY KEY NOT NULL,
+    nome_modalidade VARCHAR(10) NOT NULL
+);
+
+CREATE TABLE forma_pgto (
+    id_forma_pgto INT(3) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    nome_forma_pgto VARCHAR(25) NOT NULL
+);
+
+
+CREATE TABLE interessado (
+    id_interessado INT(10) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    nome_interessado VARCHAR(30) NOT NULL,
+    telefone_interessado NUMERIC(12) NOT NULL,
+    sigla_idioma VARCHAR(5) NOT NULL,
+    FOREIGN KEY(sigla_idioma) REFERENCES idiomas (sigla_idioma)
+);
+
+CREATE TABLE funcionarios (
+    cpf_func NUMERIC(12) PRIMARY KEY NOT NULL,
+    data_contratacao DATETIME NOT NULL,
+    data_nasc DATETIME NOT NULL,
+    endereco VARCHAR(50) NULL,
+    nome_func VARCHAR(50) NOT NULL,
+    num_carteira_trab NUMERIC(20)  NULL,
+    gen_func VARCHAR(2) NOT NULL,
+    id_setor INT(2) NOT NULL,
+    telefone NUMERIC(11) NOT NULL,
+    FOREIGN KEY(id_setor) REFERENCES setor (id_setor)
+);
+
+CREATE TABLE tipo_contrato (
+    id_tipo_contrato INT(3) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    nome_contrato VARCHAR(25) NOT NULL,
+    cpf_func NUMERIC(12) NOT NULL,
+    FOREIGN KEY(cpf_func) REFERENCES funcionarios (cpf_func)
+    
+);
+
+CREATE TABLE aluno (
+    id_aluno INT(10) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    cpf NUMERIC(10) NULL,
+    nome_aluno VARCHAR(30) NOT NULL,
+    genero VARCHAR(2) NOT NULL,
+    id_con INT(2) NOT NULL,
+    data_nasc DATETIME NOT NULL,
+    cpf_resp NUMERIC(10) NULL,
+    cep NUMERIC(15) NOT NULL,
+    FOREIGN KEY(cpf_resp) REFERENCES responsavel (cpf_resp),
+    FOREIGN KEY(cep) REFERENCES endereco (cep),
+    FOREIGN KEY(id_con) REFERENCES contato (id_con)
+);
+
+CREATE TABLE produtos (
+    id_produto INT(3) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    valor_produto FLOAT(6) NOT NULL,
+    descricao VARCHAR(40)  NULL,
+    nome_produto VARCHAR(40) NOT NULL,
+    quantidade NUMERIC(3) NOT NULL
+);
+
+CREATE TABLE venda_prod (
+    id_venda INT(3) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    cnpj NUMERIC(12) NOT NULL,
+    id_produto INT(10) NOT NULL,
+    valor_produto FLOAT(6) NOT NULL,
+    quantidade NUMERIC(5) NOT NULL,
+    id_aluno INT(10) NOT NULL,
+    FOREIGN KEY(id_aluno) REFERENCES aluno (id_aluno),
+    FOREIGN KEY(id_produto) REFERENCES produtos (id_produto),
+    FOREIGN KEY(cnpj) REFERENCES filial (cnpj)
+);
+
+CREATE TABLE pagamento (
+    data_hora DATETIME PRIMARY KEY NOT NULL,
+    id_forma_pgto INT(3) NOT NULL,
+    id_mensalidade INT(10) NULL,
+    id_venda INT(10) NULL,
+    FOREIGN KEY(id_mensalidade) REFERENCES mensalidade (id_mensalidade),
+    FOREIGN KEY(id_venda) REFERENCES venda_prod (id_venda),
+    FOREIGN KEY(id_forma_pgto) REFERENCES forma_pgto (id_forma_pgto)
+    
+);
+
+CREATE TABLE salas (
+    id_sala INT(3) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    nome_sala VARCHAR(20) NOT NULL,
+    capacidade NUMERIC(2) NOT NULL,
+    horarios DATETIME  NULL,
+    cnpj NUMERIC(12) NOT NULL,
+    FOREIGN KEY(cnpj) REFERENCES filial (cnpj)
+);
+
+CREATE TABLE turma (
+    id_turma INT(10) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    nome_turma VARCHAR(30) NOT NULL,
+    id_frequencia INT(5) NOT NULL,
+    sigla_idioma VARCHAR(5) NOT NULL,
+    sigla_mod VARCHAR(2) NOT NULL,
+    id_sala INT(3) NOT NULL,
+    id_aula DATETIME NOT NULL,
+    FOREIGN KEY(id_sala) REFERENCES salas (id_sala),
+    FOREIGN KEY(id_aula) REFERENCES chamada (id_aula),
+    FOREIGN KEY(sigla_mod) REFERENCES modalidade (sigla),
+    FOREIGN KEY(id_frequencia) REFERENCES frequencia (id_frequencia),
+    FOREIGN KEY(sigla_idioma) REFERENCES idiomas (sigla_idioma)
+);
+
+
+CREATE TABLE matricula (
+    id_matricula INT(10) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    id_turma INT(10) NOT NULL,
+    id_interessado INT(10) NULL,
+    id_mensalidade INT(10) NOT NULL,
+    id_aluno INT(10) NOT NULL,
+    sigla_desc VARCHAR(3) NOT NULL,
+    id_nota INT(3) NULL, 
+    FOREIGN KEY(id_turma) REFERENCES turma (id_turma),
+    FOREIGN KEY(id_nota) REFERENCES notas (id_nota),
+    FOREIGN KEY(id_interessado) REFERENCES interessado (id_interessado),
+    FOREIGN KEY(id_mensalidade) REFERENCES mensalidade (id_mensalidade),
+    FOREIGN KEY(id_aluno) REFERENCES aluno (id_aluno),
+    FOREIGN KEY(sigla_desc) REFERENCES desconto (sigla_desc)
+);
+
