@@ -13,7 +13,7 @@ CREATE TABLE notas (
 CREATE TABLE desconto (
     sigla_desc VARCHAR(3) PRIMARY KEY NOT NULL,
     descricao_desc VARCHAR(40) NOT NULL,
-    porcentagem_desc DECIMAL(3) NOT NULL
+    porcentagem_desc DECIMAL(3,2) NOT NULL
 );
 
 
@@ -88,7 +88,11 @@ CREATE TABLE idiomas (
 
 CREATE TABLE chamada (
     id_aula DATETIME PRIMARY KEY NOT NULL,
-    presenca VARCHAR(1) NOT NULL
+    id_turma INT(10) NOT NULL,
+    id_aluno  int(10) NOT NULL,
+    presenca BOOLEAN NOT NULL,
+    FOREIGN KEY(id_aluno) REFERENCES aluno (id_aluno),
+    FOREIGN KEY(id_turma) REFERENCES turma (id_turma)
 );
 
 
@@ -97,6 +101,8 @@ CREATE TABLE mensalidade (
     id_mensalidade INT(10) PRIMARY KEY NOT NULL AUTO_INCREMENT,
     valor FLOAT(6) NOT NULL,
     descricao VARCHAR(40) NOT NULL
+    id_aluno  int(10) NOT NULL,
+    FOREIGN KEY(id_aluno) REFERENCES aluno (id_aluno)
 );
 
 
@@ -134,15 +140,15 @@ CREATE TABLE funcionarios (
     gen_func VARCHAR(2) NOT NULL,
     id_setor INT(2) NOT NULL,
     telefone NUMERIC(11) NOT NULL,
+    id_tipo_contrato INT(3),
     FOREIGN KEY(id_setor) REFERENCES setor (id_setor)
+    FOREIGN KEY(id_tipo_contrato) REFERENCES tipo_contrato (id_tipo_contrato)
+
 );
 
 CREATE TABLE tipo_contrato (
     id_tipo_contrato INT(3) PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    nome_contrato VARCHAR(25) NOT NULL,
-    cpf_func NUMERIC(12) NOT NULL,
-    FOREIGN KEY(cpf_func) REFERENCES funcionarios (cpf_func)
-    
+    nome_contrato VARCHAR(25) NOT NULL, 
 );
 
 CREATE TABLE aluno (
@@ -164,7 +170,7 @@ CREATE TABLE produtos (
     valor_produto FLOAT(6) NOT NULL,
     descricao VARCHAR(40)  NULL,
     nome_produto VARCHAR(40) NOT NULL,
-    quantidade NUMERIC(3) NOT NULL
+    estoque NUMERIC(5) NOT NULL
 );
 
 CREATE TABLE venda_prod (
@@ -206,9 +212,7 @@ CREATE TABLE turma (
     sigla_idioma VARCHAR(5) NOT NULL,
     sigla_mod VARCHAR(2) NOT NULL,
     id_sala INT(3) NOT NULL,
-    id_aula DATETIME NOT NULL,
     FOREIGN KEY(id_sala) REFERENCES salas (id_sala),
-    FOREIGN KEY(id_aula) REFERENCES chamada (id_aula),
     FOREIGN KEY(sigla_mod) REFERENCES modalidade (sigla),
     FOREIGN KEY(id_frequencia) REFERENCES frequencia (id_frequencia),
     FOREIGN KEY(sigla_idioma) REFERENCES idiomas (sigla_idioma)
