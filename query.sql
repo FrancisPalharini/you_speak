@@ -1,42 +1,3 @@
--- TRIGGERS----------------------------------------------------------------
-
-	DELIMITER $
-		-- ATUALIZA O ESTOQUE APÓS VENDA DO PRODUTO
-		CREATE TRIGGER tgr_remove_produto AFTER INSERT
-		ON venda_prod 	FOR EACH ROW
-		BEGIN
-			UPDATE produtos SET estoque = estoque - NEW.quantidade
-		WHERE id_produto = NEW.id_produto;
-		END$
-	DELIMITER ;
-
-	DELIMITER $
-		-- ATUALIZA O ESTOQUE APÓS DEVOLUÇÃO DO PRODUTO
-		CREATE TRIGGER tgr_adiciona_produto AFTER DELETE
-		ON venda_prod
-		FOR EACH ROW
-		BEGIN
-			UPDATE produtos SET estoque = estoque + OLD.quantidade
-		WHERE id_produto = OLD.id_produto;
-		END$
-
-	DELIMITER ;
-
-	DELIMITER $
-		-- assim que add um aluno menor de idade ja pede o responsavel pela trigger  VERIFICAAAAAAAR
-		CREATE TRIGGER tgr_verifica_responsavel AFTER INSERT
-		ON aluno FOR EACH ROW 
-		BEGIN
-			if (Select TIMESTAMPDIFF(YEAR, 'new.data_nasc',NOW()) <18 ){
-			-- chama a proc_inserir_responsavel;
-			call proc_inserir_responsavel (1236547891, '2022-01-01', 'Carlos', 'F');
-			}
-		END$
-
-	DELIMITER;
-
-	
-
 -- VIEW ------------------------------------------------------------------
 
 		-- MOSTRA AS SALAS VAZIAS APÓS INSERT DA TURMA 
@@ -76,6 +37,17 @@
 	-- mostra a capacidade total de alunos da filial
 		create view vw_capacidade_total as 
 		select sum(capacidade) as 'Capacidade Total' from salas where cnpj = 785965214001;
+
+
+	-- mostra o total de matricula com responsavel
+		create view vw_quantidade_responsavel as 
+		select count(cpf_resp) as 'Total de Alunos com Responsavel' from aluno;
+
+	--lista quantas turma tem por modalidade
+		CREATE VIEW vw_turma_modalidade as
+			select moda.nome_modalidade as modalidade, count(tur.id_turma) as turmas from modalidade moda right join turma 
+			tur on moda.sigla = tur.sigla_mod	group by modalidade order by turmas desc;
+
 
 		
 
@@ -124,5 +96,65 @@ delimiter $
 			select count(ven.p_id_prod), con.nome_produto from venda_prod ven inner join produtos pro on ven.id_prod = pro.id_prod; 
 		end$
 	delimiter ;
+
+
+-- TRIGGERS----------------------------------------------------------------
+
+	DELIMITER $
+		-- ATUALIZA O ESTOQUE APÓS VENDA DO PRODUTO
+		CREATE TRIGGER tgr_remove_produto AFTER INSERT
+		ON venda_prod 	FOR EACH ROW
+		BEGIN
+			UPDATE produtos SET estoque = estoque - NEW.quantidade
+		WHERE id_produto = NEW.id_produto;
+		END$
+	DELIMITER ;
+
+	DELIMITER $
+		-- ATUALIZA O ESTOQUE APÓS DEVOLUÇÃO DO PRODUTO
+		CREATE TRIGGER tgr_adiciona_produto AFTER DELETE
+		ON venda_prod
+		FOR EACH ROW
+		BEGIN
+			UPDATE produtos SET estoque = estoque + OLD.quantidade
+		WHERE id_produto = OLD.id_produto;
+		END$
+
+	DELIMITER ;
+
+	DELIMITER $
+		-- ATUALIZA INTERESSADO MATRICULADO
+		CREATE TRIGGER tgr_interessado_matricula AFTER INSERT
+		ON matricula
+		FOR EACH ROW
+		BEGIN
+			insert into matricula values new.id_interessado;
+		END$
+
+	DELIMITER ;
+
+	DELIMITER $
+		-- ATUALIZA  MATRICULA INTERESSADO
+		CREATE TRIGGER tgr_matricula_aluno AFTER INSERT
+		ON aluno
+		FOR EACH ROW
+		BEGIN
+			insert into aluno values new.id_aluno;
+
+		END$
+
+	DELIMITER ;
+
+	DELIMITER $
+		-- assim que add um aluno menor de idade ja pede o responsavel pela trigger 
+		CREATE TRIGGER tgr_verifica_responsavel AFTER INSERT
+		ON aluno FOR EACH ROW 
+		BEGIN
+			if (Select TIMESTAMPDIFF(YEAR, 'new.data_nasc',NOW()) <18 ){
+			call proc_inserir_responsavel (1236547891, '2022-01-01', 'Carlos', 'F');
+			}
+		END$
+
+	DELIMITER;
 
 

@@ -220,14 +220,14 @@ INSERT INTO turma (id_turma, nome_turma, id_frequencia, sigla_idioma, sigla_mod,
 
 --matricula
 
-INSERT INTO matricula (id_matricula, id_turma, id_interessado, id_mensalidade, id_aluno, sigla_desc, id_nota) VALUES ing
+INSERT INTO matricula (id_matricula, id_turma, id_interessado, id_mensalidade, id_aluno, sigla_desc, id_nota) VALUES 
 (001, 001, 000001, 001, 001, 'Uni', 1);
-INSERT INTO matricula (id_matricula, id_turma, id_interessado, id_mensalidade, id_aluno, sigla_desc, id_nota) VALUES ita
+INSERT INTO matricula (id_matricula, id_turma, id_interessado, id_mensalidade, id_aluno, sigla_desc, id_nota) VALUES 
 (002, 004, NULL, 001, 002, 'Fun', 2);
-INSERT INTO matricula (id_matricula, id_turma, id_interessado, id_mensalidade, id_aluno, sigla_desc, id_nota) VALUES  esp
+INSERT INTO matricula (id_matricula, id_turma, id_interessado, id_mensalidade, id_aluno, sigla_desc, id_nota) VALUES  
 (003, 003, NULL, 001, 002, 'Emp', 2);
-INSERT INTO matricula (id_matricula, id_turma, id_interessado, id_mensalidade, id_aluno, sigla_desc, id_nota) VALUES  ing
+INSERT INTO matricula (id_matricula, id_turma, id_interessado, id_mensalidade, id_aluno, sigla_desc, id_nota) VALUES  
 (004, 002, NULL, 001, 001, 'Uni', 1);
-INSERT INTO matricula (id_matricula, id_turma, id_interessado, id_mensalidade, id_aluno, sigla_desc, id_nota) VALUES ing
+INSERT INTO matricula (id_matricula, id_turma, id_interessado, id_mensalidade, id_aluno, sigla_desc, id_nota) VALUES 
 (005, 001, NULL, 001, 001, 'Uni', 1);
 
