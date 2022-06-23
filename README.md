@@ -2,4 +2,3 @@
 
 projeto de SGBD em MySQL
 tema: escola de idiomas
-status: em andamento
